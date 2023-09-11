@@ -58,6 +58,7 @@ public class Presenter {
 	public void runServices(User user){
 		int digitedOption;
 		String yesOrNotAnswer;
+
 		view.showMessage("Bienvenido"+user.getNickName());
 		view.showMessage("¿Que Deseas Hacer Hoy?");
 		view.showMessage("1.Crear Tarea\n2.Ver tareas Pendientes\n3.Ver historial de tareas\n4.Borrar Tarea");
@@ -66,6 +67,7 @@ public class Presenter {
 		case 1:
 			Task currentTask=createTask(user);
 			user.addTaskToList(currentTask);
+			taskManager.addTaskToTaskHistory(currentTask);
 			taskManager.setTaskId(user.getTasksList());
 			break;
 		case 2:
@@ -81,10 +83,7 @@ public class Presenter {
 			user.viewTasksList(incompletesTasks2);
 			view.showMessage("¿Deseas Eliminar alguna Tarea?");
 			yesOrNotAnswer=view.readString();
-			if(yesOrNotAnswer.equals("si")){
-			  	
-			}
-		
+            
 			break;
 		}
 	}
@@ -131,6 +130,7 @@ public class Presenter {
 				birthDateAsString=view.readString();
 				birthDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 				birthDate=LocalDate.parse(birthDateAsString,birthDateFormat);
+				usermanager.verifyUserAge(birthDate);
 				correctFormat=true;
 			}catch(DateTimeException e){
 				view.showMessage("Formato ingresado incorrecto,vuelve a intentarlo");
@@ -180,7 +180,6 @@ public class Presenter {
 		}
 		return task;
 	}
-	
-	
+
 
 }

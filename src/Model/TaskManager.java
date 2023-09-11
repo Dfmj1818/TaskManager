@@ -1,18 +1,24 @@
 package Model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TaskManager {
+	private List<Task> tasksHistory;
 	
 	public TaskManager() {
-		
+		tasksHistory=new ArrayList<Task>();
 	}
 	
 	public Task createTask(User user, LocalDate todayDate,LocalDate dueDate,String taskContent,boolean stateOfTask) {
 		Task task=new Task(user,todayDate,dueDate,taskContent,false);
 		return task;
+	}
+	
+	public void addTaskToTaskHistory(Task task){
+		tasksHistory.add(task);
 	}
 	
 	public List<Task>findIncompletesTasks(User user){
@@ -29,6 +35,8 @@ public class TaskManager {
        		task.setId(id++);
        	}
 	}
+	
+
 	
 
 }

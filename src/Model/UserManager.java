@@ -10,16 +10,18 @@ import Exceptions.UserNotFoundException;
 
 public class UserManager {
 	private List<User>usersDataBase;
-
+    
 
 	public UserManager() {
 		usersDataBase=new ArrayList<User>();
+		
 	}
 
 	public void addUserToList(User user){
 		usersDataBase.add(user);
 	}
 
+	
 	public void setUsersDataBase(List<User>usersDataBase){
 		this.usersDataBase=usersDataBase;
 	}
@@ -44,5 +46,7 @@ public class UserManager {
 		}
 		throw new AgeBelowAgeException();
 	}
+	
+
 
 }
