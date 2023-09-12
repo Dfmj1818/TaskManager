@@ -11,13 +11,15 @@ public class Task {
 	private boolean stateOfTask;
 	private String taskContent;
 	private int id;
-	
+	private String checkedOrUncheckedTask;
+
 	public Task(User user,LocalDate startDate,LocalDate dueDate,String taskContent,boolean stateOfTask){
 		this.user=user;
 		this.startDate=startDate;
 		this.dueDate=dueDate;
 		this.taskContent=taskContent;
 		this.stateOfTask=stateOfTask;
+
 	}
 
 	public void setUser(User user){
@@ -59,7 +61,7 @@ public class Task {
 	public String getTaskContent() {
 		return taskContent;
 	}
-	
+
 	public void setId(int id){
 		this.id=id;
 	}
@@ -67,13 +69,25 @@ public class Task {
 	public int getId() {
 		return id;
 	}
-	
+
+	public void setCheckedOrUncheckedTask(String checkOrUnchecked){
+		this.checkedOrUncheckedTask=checkOrUnchecked;
+	}
+
+	public String getCheckedOrUncheckedTask() {
+		return checkedOrUncheckedTask;
+	}
+
 	@Override
 	public String toString() {
-		return "Tarea Hecha por "+user.getNickName()+"\n"
-				+"Fecha De Inicio: "+getStartDate()+"\n"
-				+"Fecha de Vencimiento: "+getDueDate()+"\n"
-				+"Estado de la Tarea:"+getStateOfTask();
+		String taskInformation="Tarea Hecha por "+user.getNickName()+"\n"+"Fecha De Inicio: "+getStartDate()+"\n"+"Fecha de Vencimiento: "+getDueDate()+"\n";
+		if(!getStateOfTask()){
+			taskInformation+="Estado de la tarea: "+"[X]";
+		}
+		else {
+			taskInformation+="Estado de la tarea: "+"[✓]";
+		}		
+		return taskInformation;
 	}
 
 

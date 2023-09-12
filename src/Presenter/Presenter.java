@@ -8,6 +8,7 @@ import java.util.List;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.AttemptsExceededException;
+import Exceptions.DateBelowCurrentDateException;
 import Exceptions.UserNotFoundException;
 import Model.Task;
 import Model.TaskManager;
@@ -50,6 +51,7 @@ public class Presenter {
 
 			default:
 				presenter.view.showMessage("La Opcion Digitada no existe,Por favor vuelve a intentarlo");
+				break;
 			}
 		}
 
@@ -58,34 +60,44 @@ public class Presenter {
 	public void runServices(User user){
 		int digitedOption;
 		String yesOrNotAnswer;
+		boolean exit=false;
+		while(!exit){
+			view.showMessage("Bienvenido "+user.getNickName());
+			view.showMessage("¿Que Deseas Hacer Hoy?");
+			view.showMessage("1.Crear Tarea\n2.Ver tareas Pendientes\n3.Ver Todas las tareas\n4.Borrar Tarea\n5.Salir");
+			digitedOption=view.readInt();
+			switch(digitedOption){
+			case 1:
+				Task currentTask=createTask(user);	
+				user.addTaskToList(currentTask);
+				taskManager.addTaskToTaskHistory(currentTask);
+				taskManager.setTaskId(user.getTasksList());
+				break;
+			case 2:
+				List<Task>incompletesTasks=taskManager.findIncompletesTasks(user);
+				user.viewTasksList(incompletesTasks);
+				break;
+			case 3:
+				List<Task>tasksHistory=user.getTasksList();
+				user.viewTasksList(tasksHistory);
+				break;	
+			case 4:
+				List<Task>incompletesTasks2=taskManager.findIncompletesTasks(user);
+				user.viewTasksList(incompletesTasks2);
+				view.showMessage("¿Deseas Eliminar alguna Tarea?");
+				yesOrNotAnswer=view.readString();         
+				break;
+			case 5:
+				exit=true;
+				break;
 
-		view.showMessage("Bienvenido"+user.getNickName());
-		view.showMessage("¿Que Deseas Hacer Hoy?");
-		view.showMessage("1.Crear Tarea\n2.Ver tareas Pendientes\n3.Ver historial de tareas\n4.Borrar Tarea");
-		digitedOption=view.readInt();
-		switch(digitedOption){
-		case 1:
-			Task currentTask=createTask(user);
-			user.addTaskToList(currentTask);
-			taskManager.addTaskToTaskHistory(currentTask);
-			taskManager.setTaskId(user.getTasksList());
-			break;
-		case 2:
-			List<Task>incompletesTasks=taskManager.findIncompletesTasks(user);
-			user.viewTasksList(incompletesTasks);
-			break;
-		case 3:
-			List<Task>tasksHistory=user.getTasksList();
-			user.viewTasksList(tasksHistory);
-			break;	
-		case 4:
-			List<Task>incompletesTasks2=taskManager.findIncompletesTasks(user);
-			user.viewTasksList(incompletesTasks2);
-			view.showMessage("¿Deseas Eliminar alguna Tarea?");
-			yesOrNotAnswer=view.readString();
-            
-			break;
+			default:
+				view.showMessage("La opcion digitada no existe,vuelve a intentarlo");
+				break;
+
+			}
 		}
+
 	}
 
 	public User loginUser(){
@@ -93,7 +105,6 @@ public class Presenter {
 		String password;
 		User foundUser = null;
 		int attempts=0;
-
 		while(attempts<=6) {
 			view.showMessage("Ingresa tu correo Electronico");
 			mail=view.readString();
@@ -125,13 +136,14 @@ public class Presenter {
 
 		while(!correctFormat){
 			try {
-				view.showMessage("Bienvenido A TaskManager\nEste es nuestro sistema de registro");
+				view.showMessage("BIENVENIDO A TASK MANAGER!!\n\nA Continuacion Sigue los siguientes Pasos");
 				view.showMessage("Digita tu fecha de nacimiento en formato dd/MM/yyyy");
 				birthDateAsString=view.readString();
 				birthDateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 				birthDate=LocalDate.parse(birthDateAsString,birthDateFormat);
 				usermanager.verifyUserAge(birthDate);
 				correctFormat=true;
+
 			}catch(DateTimeException e){
 				view.showMessage("Formato ingresado incorrecto,vuelve a intentarlo");
 			}catch(AgeBelowAgeException e){
@@ -172,12 +184,17 @@ public class Presenter {
 				dueDateAsString=view.readString();
 				dateFormat=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 				dueDate=LocalDate.parse(dueDateAsString,dateFormat);
+				taskManager.verifyDueDate(dueDate);
 				correctFormat=true;
 				task=taskManager.createTask(user, todayDate, dueDate, taskContent, correctFormat);
 			}catch(DateTimeException e){
 				view.showMessage("Formato Digitado Incorrecto,Vuelve a intentarlo");
+			}catch(DateBelowCurrentDateException e){
+				view.showMessage(e.getMessage());
 			}
+			view.showMessage("Tarea Creada Con exito");
 		}
+		
 		return task;
 	}
 

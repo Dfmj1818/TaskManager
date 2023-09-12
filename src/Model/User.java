@@ -75,5 +75,17 @@ public class User {
 		return filteredList;
 	}
 
+	public void verifyStateOfTask(){
+		for(Task task:tasksList){
+			if(task.getStateOfTask()){
+				task.setCheckedOrUncheckedTask("[✓]");
+			}
+			else {
+				task.setCheckedOrUncheckedTask("[X]");
+			}
+		}
+
+	}
+ 
 
 }
