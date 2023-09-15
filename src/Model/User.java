@@ -67,12 +67,8 @@ public class User {
 		tasksList.forEach(task->System.out.println(task));
 	}
 
-	public List<Task>eraseTask(int choosedOption,List<Task>taskList){
-		List<Task>filteredList=tasksList.stream()
-				.filter(task->task.getId()!=choosedOption)
-				.collect(Collectors.toList());
-
-		return filteredList;
+	public void eraseTask(int choosedOption){
+		 tasksList.removeIf(task->task.getId()==choosedOption);
 	}
 
 	public void verifyStateOfTask(){

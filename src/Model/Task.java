@@ -80,7 +80,7 @@ public class Task {
 
 	@Override
 	public String toString() {
-		String taskInformation="Tarea Hecha por "+user.getNickName()+"\n"+"Fecha De Inicio: "+getStartDate()+"\n"+"Fecha de Vencimiento: "+getDueDate()+"\n";
+		String taskInformation="ID: "+id+"\nTarea Hecha por "+user.getNickName()+"\n"+"Fecha De Inicio: "+getStartDate()+"\n"+"Fecha de Vencimiento: "+getDueDate()+"\n";
 		if(!getStateOfTask()){
 			taskInformation+="Estado de la tarea: "+"[X]";
 		}

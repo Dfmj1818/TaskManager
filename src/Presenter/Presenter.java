@@ -10,6 +10,7 @@ import Exceptions.AgeBelowAgeException;
 import Exceptions.AttemptsExceededException;
 import Exceptions.DateBelowCurrentDateException;
 import Exceptions.UserNotFoundException;
+import Exceptions.UserTaskListEmptyException;
 import Model.Task;
 import Model.TaskManager;
 import Model.User;
@@ -59,8 +60,9 @@ public class Presenter {
 
 	public void runServices(User user){
 		int digitedOption;
-		String yesOrNotAnswer;
 		boolean exit=false;
+		int taskToErase=0;
+
 		while(!exit){
 			view.showMessage("Bienvenido "+user.getNickName());
 			view.showMessage("¿Que Deseas Hacer Hoy?");
@@ -74,6 +76,11 @@ public class Presenter {
 				taskManager.setTaskId(user.getTasksList());
 				break;
 			case 2:
+				try {
+					taskManager.verifyIsTaskListIsEmpty(user);
+				}catch(UserTaskListEmptyException e){
+					view.showMessage(e.getMessage());
+				}
 				List<Task>incompletesTasks=taskManager.findIncompletesTasks(user);
 				user.viewTasksList(incompletesTasks);
 				break;
@@ -82,10 +89,16 @@ public class Presenter {
 				user.viewTasksList(tasksHistory);
 				break;	
 			case 4:
-				List<Task>incompletesTasks2=taskManager.findIncompletesTasks(user);
-				user.viewTasksList(incompletesTasks2);
-				view.showMessage("¿Deseas Eliminar alguna Tarea?");
-				yesOrNotAnswer=view.readString();         
+				try {
+					user.viewTasksList(user.getTasksList());
+					view.showMessage("¿Que tarea deseas Eliminar?");
+					taskToErase=view.readInt();
+					taskManager.verifyIsTaskListIsEmpty(user);
+				}catch(UserTaskListEmptyException e){
+					view.showMessage(e.getMessage());
+				}
+				user.eraseTask(taskToErase);
+				view.showMessage("Tarea eliminada con exito");
 				break;
 			case 5:
 				exit=true;
@@ -105,6 +118,7 @@ public class Presenter {
 		String password;
 		User foundUser = null;
 		int attempts=0;
+
 		while(attempts<=6) {
 			view.showMessage("Ingresa tu correo Electronico");
 			mail=view.readString();
@@ -192,9 +206,8 @@ public class Presenter {
 			}catch(DateBelowCurrentDateException e){
 				view.showMessage(e.getMessage());
 			}
-			view.showMessage("Tarea Creada Con exito");
 		}
-		
+		view.showMessage("Tarea Creada Con exito");
 		return task;
 	}
 

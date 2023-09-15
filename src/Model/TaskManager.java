@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.DateBelowCurrentDateException;
+import Exceptions.UserTaskListEmptyException;
 
 public class TaskManager {
 	private List<Task> tasksHistory;
@@ -35,7 +36,8 @@ public class TaskManager {
 	public void setTaskId(List<Task>tasksList){
 		int id=0;
 		for(Task task:tasksList){
-			task.setId(id++);
+			id++;
+			task.setId(id);
 		}
 	}
 
@@ -45,7 +47,11 @@ public class TaskManager {
 		}
 	}
 	
-	
+    public void verifyIsTaskListIsEmpty(User user){
+    	if(user.getTasksList().isEmpty()){
+    		throw new UserTaskListEmptyException();
+    	}
+    }
 
 
 }
