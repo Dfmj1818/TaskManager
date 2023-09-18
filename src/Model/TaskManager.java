@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.DateBelowCurrentDateException;
+import Exceptions.NotFoundTaskException;
 import Exceptions.UserTaskListEmptyException;
 
 public class TaskManager {
@@ -33,9 +34,9 @@ public class TaskManager {
 		return incompletesTasks;
 	}
 
-	public void setTaskId(List<Task>tasksList){
+	public void setTaskId(User user){
 		int id=0;
-		for(Task task:tasksList){
+		for(Task task:user.getTasksList()){
 			id++;
 			task.setId(id);
 		}
@@ -52,6 +53,16 @@ public class TaskManager {
     		throw new UserTaskListEmptyException();
     	}
     }
+    
+    public Task getChoosedTaskCompleted(User user,int digitiedTask) {	
+		for(Task task:user.getTasksList()){
+			if(task.getId()==digitiedTask){
+				return task;
+			}  	
+		}
+		throw new NotFoundTaskException();	
+	}
+  
 
 
 }

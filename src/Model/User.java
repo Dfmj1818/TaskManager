@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import Exceptions.NotFoundTaskException;
+
 public class User {
 	private String nickName;
 	private String mail;
@@ -68,7 +70,7 @@ public class User {
 	}
 
 	public void eraseTask(int choosedOption){
-		 tasksList.removeIf(task->task.getId()==choosedOption);
+		tasksList.removeIf(task->task.getId()==choosedOption);
 	}
 
 	public void verifyStateOfTask(){
@@ -82,6 +84,10 @@ public class User {
 		}
 
 	}
- 
+
+	
+	public void markAsCompeltedTask() {
+		
+	}
 
 }
