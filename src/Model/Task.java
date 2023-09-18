@@ -80,21 +80,17 @@ public class Task {
 
 	@Override
 	public String toString() {
-		String taskInformation="ID: "+id+"\nTarea Hecha por "+user.getNickName()+"\n"+"Fecha De Inicio: "+getStartDate()+"\n"+"Fecha de Vencimiento: "+getDueDate()+"\n"+"Porposito de la Tarea: "+taskContent;
+		String taskInformation="ID: "+id+"\nTarea Hecha por "+user.getNickName()+"\n"+"Fecha De Inicio: "+getStartDate()+"\n"+"Fecha de Vencimiento: "+getDueDate()+"\n"+"Proposito de la Tarea: "+taskContent;
 		if(!getStateOfTask()){
-			taskInformation+="Estado de la tarea: "+"[X]";
+			taskInformation+="\nEstado de la tarea: "+"[X]";
 		}
 		else {
-			taskInformation+="Estado de la tarea: "+"[✓]";
+			taskInformation+="\nEstado de la tarea: "+"[✓]";
 		}		
 		return taskInformation;
 	}
 
 
-	public void markTaskAsCompleted(int digitiedTask){
-        
-
-	}
 
 
 }

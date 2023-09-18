@@ -86,8 +86,5 @@ public class User {
 	}
 
 	
-	public void markAsCompeltedTask() {
-		
-	}
 
 }

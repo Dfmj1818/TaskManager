@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.DateBelowCurrentDateException;
+import Exceptions.NoPendingTasksException;
 import Exceptions.NotFoundTaskException;
 import Exceptions.UserTaskListEmptyException;
 
@@ -30,7 +31,7 @@ public class TaskManager {
 		List<Task>incompletesTasks=user.getTasksList().stream()
 				.filter(task->!task.getStateOfTask())
 				.collect(Collectors.toList());
-
+                
 		return incompletesTasks;
 	}
 
@@ -51,6 +52,12 @@ public class TaskManager {
     public void verifyIsTaskListIsEmpty(User user){
     	if(user.getTasksList().isEmpty()){
     		throw new UserTaskListEmptyException();
+    	}
+    }
+    
+    public void verifyIncompletesTasks(List<Task>incompleteTasks){
+    	if(incompleteTasks.isEmpty()){
+    		throw new NoPendingTasksException();
     	}
     }
     

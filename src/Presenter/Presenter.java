@@ -11,6 +11,7 @@ import java.util.List;
 import Exceptions.AgeBelowAgeException;
 import Exceptions.AttemptsExceededException;
 import Exceptions.DateBelowCurrentDateException;
+import Exceptions.NoPendingTasksException;
 import Exceptions.NotFoundTaskException;
 import Exceptions.UserNotFoundException;
 import Exceptions.UserTaskListEmptyException;
@@ -76,14 +77,13 @@ public class Presenter {
 				createTask(user);
 				break;
 			case 2:
-                viewIncompletesTask(user);
+				viewIncompletesTask(user);
 				break;
 			case 3:
-				List<Task>tasksHistory=user.getTasksList();
-				user.viewTasksList(tasksHistory);
+				viewAllTasks(user);
 				break;	
 			case 4:
-                eraseTask(user);
+				eraseTask(user);
 				break;
 			case 5:
 				exit=true;
@@ -102,24 +102,20 @@ public class Presenter {
 		String mail;
 		String password;
 		User foundUser = null;
-		int attempts=0;
-
-		while(attempts<=6) {
-			view.showMessage("Ingresa tu correo Electronico");
-			mail=view.readString();
-			view.showMessage("Ingresa tu contraseña");
-			password=view.readString();
+        boolean exit=false;
+        
+		while(!exit) {
 			try {
+				view.showMessage("Ingresa tu correo Electronico");
+				mail=view.readString();
+				view.showMessage("Ingresa tu contraseña");
+				password=view.readString();
 				foundUser=usermanager.findUserInDataBase(mail, password);
-
+				exit=true;
 			}catch(UserNotFoundException e){
-				view.showMessage(e.getMessage());
-				attempts++;	
-			}catch(AttemptsExceededException e){
-				view.showMessage(e.getMessage());
-				break;
+				view.showMessage(e.getMessage());	
 			}
-
+			
 		}
 		return foundUser;
 	}
@@ -198,8 +194,18 @@ public class Presenter {
 		taskManager.setTaskId(user);
 		taskManager.addTaskToTaskHistory(task);
 	}
-	
-	
+
+
+	public void viewAllTasks(User user){
+		try {
+			List<Task>tasksHistory=user.getTasksList();
+			taskManager.verifyIsTaskListIsEmpty(user);
+			user.viewTasksList(tasksHistory);
+		}catch(UserTaskListEmptyException e){
+			view.showMessage(e.getMessage());
+		}
+
+	}
 
 	public void viewIncompletesTask(User user) {
 		String yesOrNotAnswer="";
@@ -207,6 +213,7 @@ public class Presenter {
 		try {
 			taskManager.verifyIsTaskListIsEmpty(user);
 			List<Task>incompletesTasks=taskManager.findIncompletesTasks(user);
+			taskManager.verifyIncompletesTasks(incompletesTasks);
 			user.viewTasksList(incompletesTasks);
 			view.showMessage("¿Deseas Marcar Como Completada alguna Tarea?");
 			yesOrNotAnswer=view.readString();
@@ -219,6 +226,8 @@ public class Presenter {
 		}catch(UserTaskListEmptyException e){
 			view.showMessage(e.getMessage());
 		}catch(NotFoundTaskException e){
+			view.showMessage(e.getMessage());
+		}catch(NoPendingTasksException e){
 			view.showMessage(e.getMessage());
 		}
 	}
@@ -236,7 +245,7 @@ public class Presenter {
 		}catch(UserTaskListEmptyException e){
 			view.showMessage(e.getMessage());
 		}
-		
+
 	}
 
 
