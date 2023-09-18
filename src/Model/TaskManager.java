@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.DateBelowCurrentDateException;
+import Exceptions.NoPendingTasksException;
+import Exceptions.NotFoundTaskException;
+import Exceptions.UserTaskListEmptyException;
 
 public class TaskManager {
 	private List<Task> tasksHistory;
@@ -28,14 +31,15 @@ public class TaskManager {
 		List<Task>incompletesTasks=user.getTasksList().stream()
 				.filter(task->!task.getStateOfTask())
 				.collect(Collectors.toList());
-
+                
 		return incompletesTasks;
 	}
 
-	public void setTaskId(List<Task>tasksList){
+	public void setTaskId(User user){
 		int id=0;
-		for(Task task:tasksList){
-			task.setId(id++);
+		for(Task task:user.getTasksList()){
+			id++;
+			task.setId(id);
 		}
 	}
 
@@ -45,7 +49,29 @@ public class TaskManager {
 		}
 	}
 	
-	
+    public void verifyIsTaskListIsEmpty(User user){
+    	if(user.getTasksList().isEmpty()){
+    		throw new UserTaskListEmptyException();
+    	}
+    }
+    
+    public void verifyIncompletesTasks(List<Task>incompleteTasks){
+    	if(incompleteTasks.isEmpty()){
+    		throw new NoPendingTasksException();
+    	}
+    }
+    
+    public Task getChoosedTaskCompleted(User user,int digitiedTask) {	
+		for(Task task:user.getTasksList()){
+			if(task.getId()==digitiedTask){
+				return task;
+			}  	
+		}
+		throw new NotFoundTaskException();	
+	}
+    
+    public String 
+  
 
 
 }
