@@ -11,10 +11,10 @@ import java.util.List;
 import Exceptions.AgeBelowAgeException;
 import Exceptions.AttemptsExceededException;
 import Exceptions.DateBelowCurrentDateException;
-import Exceptions.NoPendingTasksException;
+import Exceptions.NoPendingTaskListException;
 import Exceptions.NotFoundTaskException;
 import Exceptions.UserNotFoundException;
-import Exceptions.UserTaskListEmptyException;
+import Exceptions.UserEmptyTaskListException;
 import Model.Task;
 import Model.TaskManager;
 import Model.User;
@@ -201,7 +201,7 @@ public class Presenter {
 			List<Task>tasksHistory=user.getTasksList();
 			taskManager.verifyIsTaskListIsEmpty(user);
 			user.viewTasksList(tasksHistory);
-		}catch(UserTaskListEmptyException e){
+		}catch(UserEmptyTaskListException e){
 			view.showMessage(e.getMessage());
 		}
 
@@ -223,11 +223,11 @@ public class Presenter {
 				Task taskToErase=taskManager.getChoosedTaskCompleted(user,digitedTask);
 				taskToErase.setStateOfTask(true);			            
 			}
-		}catch(UserTaskListEmptyException e){
+		}catch(UserEmptyTaskListException e){
 			view.showMessage(e.getMessage());
 		}catch(NotFoundTaskException e){
 			view.showMessage(e.getMessage());
-		}catch(NoPendingTasksException e){
+		}catch(NoPendingTaskListException e){
 			view.showMessage(e.getMessage());
 		}
 	}
@@ -242,7 +242,7 @@ public class Presenter {
 			taskManager.verifyIsTaskListIsEmpty(user);
 			user.eraseTask(digitedTaskToErase);
 			view.showMessage("Tarea eliminada con exito");
-		}catch(UserTaskListEmptyException e){
+		}catch(UserEmptyTaskListException e){
 			view.showMessage(e.getMessage());
 		}
 
