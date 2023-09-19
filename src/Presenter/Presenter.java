@@ -2,14 +2,19 @@ package Presenter;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.AttemptsExceededException;
 import Exceptions.DateBelowCurrentDateException;
+import Exceptions.NoPendingTaskListException;
+import Exceptions.NotFoundTaskException;
 import Exceptions.UserNotFoundException;
+import Exceptions.UserEmptyTaskListException;
 import Model.Task;
 import Model.TaskManager;
 import Model.User;
@@ -59,8 +64,9 @@ public class Presenter {
 
 	public void runServices(User user){
 		int digitedOption;
-		String yesOrNotAnswer;
 		boolean exit=false;
+
+
 		while(!exit){
 			view.showMessage("Bienvenido "+user.getNickName());
 			view.showMessage("¿Que Deseas Hacer Hoy?");
@@ -68,24 +74,16 @@ public class Presenter {
 			digitedOption=view.readInt();
 			switch(digitedOption){
 			case 1:
-				Task currentTask=createTask(user);	
-				user.addTaskToList(currentTask);
-				taskManager.addTaskToTaskHistory(currentTask);
-				taskManager.setTaskId(user.getTasksList());
+				createTask(user);
 				break;
 			case 2:
-				List<Task>incompletesTasks=taskManager.findIncompletesTasks(user);
-				user.viewTasksList(incompletesTasks);
+				viewIncompletesTask(user);
 				break;
 			case 3:
-				List<Task>tasksHistory=user.getTasksList();
-				user.viewTasksList(tasksHistory);
+				viewAllTasks(user);
 				break;	
 			case 4:
-				List<Task>incompletesTasks2=taskManager.findIncompletesTasks(user);
-				user.viewTasksList(incompletesTasks2);
-				view.showMessage("¿Deseas Eliminar alguna Tarea?");
-				yesOrNotAnswer=view.readString();         
+				eraseTask(user);
 				break;
 			case 5:
 				exit=true;
@@ -104,23 +102,20 @@ public class Presenter {
 		String mail;
 		String password;
 		User foundUser = null;
-		int attempts=0;
-		while(attempts<=6) {
-			view.showMessage("Ingresa tu correo Electronico");
-			mail=view.readString();
-			view.showMessage("Ingresa tu contraseña");
-			password=view.readString();
+        boolean exit=false;
+        
+		while(!exit) {
 			try {
+				view.showMessage("Ingresa tu correo Electronico");
+				mail=view.readString();
+				view.showMessage("Ingresa tu contraseña");
+				password=view.readString();
 				foundUser=usermanager.findUserInDataBase(mail, password);
-
+				exit=true;
 			}catch(UserNotFoundException e){
-				view.showMessage(e.getMessage());
-				attempts++;	
-			}catch(AttemptsExceededException e){
-				view.showMessage(e.getMessage());
-				break;
+				view.showMessage(e.getMessage());	
 			}
-
+			
 		}
 		return foundUser;
 	}
@@ -165,7 +160,7 @@ public class Presenter {
 
 	}
 
-	public Task createTask(User user){
+	public void createTask(User user){
 		String taskContent;
 		LocalDate startDate;
 		String dueDateAsString;
@@ -174,10 +169,11 @@ public class Presenter {
 		LocalDate todayDate;
 		boolean correctFormat=false;
 		Task task=null;
-
+		LocalTime s;
 		view.showMessage("¿Digita el Proposito de la tarea");
 		taskContent=view.readString();
 		todayDate=LocalDate.now();
+
 		while(!correctFormat){
 			try {
 				view.showMessage("Digita La fecha limite para esta tarea");
@@ -192,11 +188,69 @@ public class Presenter {
 			}catch(DateBelowCurrentDateException e){
 				view.showMessage(e.getMessage());
 			}
-			view.showMessage("Tarea Creada Con exito");
 		}
-		
-		return task;
+		view.showMessage("Tarea Creada Con exito");
+		user.addTaskToList(task);
+		taskManager.setTaskId(user);
+		taskManager.addTaskToTaskHistory(task);
+	}
+
+
+	public void viewAllTasks(User user){
+		try {
+			List<Task>tasksHistory=user.getTasksList();
+			taskManager.verifyIsTaskListIsEmpty(user);
+			user.viewTasksList(tasksHistory);
+		}catch(UserEmptyTaskListException e){
+			view.showMessage(e.getMessage());
+		}
+
+	}
+
+	public void viewIncompletesTask(User user) {
+		String yesOrNotAnswer="";
+
+		try {
+			taskManager.verifyIsTaskListIsEmpty(user);
+			List<Task>incompletesTasks=taskManager.findIncompletesTasks(user);
+			taskManager.verifyIncompletesTasks(incompletesTasks);
+			user.viewTasksList(incompletesTasks);
+			view.showMessage("¿Deseas Marcar Como Completada alguna Tarea?");
+			yesOrNotAnswer=view.readString();
+			if(yesOrNotAnswer.equals("si")){
+				view.showMessage("¿Que tarea deseas Marcar Como completada?");
+				int digitedTask=view.readInt();
+				Task taskToErase=taskManager.getChoosedTaskCompleted(user,digitedTask);
+				taskToErase.setStateOfTask(true);			            
+			}
+		}catch(UserEmptyTaskListException e){
+			view.showMessage(e.getMessage());
+		}catch(NotFoundTaskException e){
+			view.showMessage(e.getMessage());
+		}catch(NoPendingTaskListException e){
+			view.showMessage(e.getMessage());
+		}
+	}
+
+	public void eraseTask(User user){
+		int digitedTaskToErase;
+
+		try {
+			user.viewTasksList(user.getTasksList());
+			view.showMessage("¿Que tarea deseas Eliminar?");
+			digitedTaskToErase=view.readInt();
+			taskManager.verifyIsTaskListIsEmpty(user);
+			user.eraseTask(digitedTaskToErase);
+			view.showMessage("Tarea eliminada con exito");
+		}catch(UserEmptyTaskListException e){
+			view.showMessage(e.getMessage());
+		}
+
 	}
 
 
 }
+
+
+
+

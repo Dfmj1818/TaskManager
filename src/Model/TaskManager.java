@@ -1,15 +1,17 @@
 package Model;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import Exceptions.AgeBelowAgeException;
 import Exceptions.DateBelowCurrentDateException;
-import Exceptions.NoPendingTasksException;
+import Exceptions.NoPendingTaskListException;
 import Exceptions.NotFoundTaskException;
-import Exceptions.UserTaskListEmptyException;
+import Exceptions.UserEmptyTaskListException;
+
 
 public class TaskManager {
 	private List<Task> tasksHistory;
@@ -51,13 +53,13 @@ public class TaskManager {
 	
     public void verifyIsTaskListIsEmpty(User user){
     	if(user.getTasksList().isEmpty()){
-    		throw new UserTaskListEmptyException();
+    		throw new UserEmptyTaskListException();
     	}
     }
     
     public void verifyIncompletesTasks(List<Task>incompleteTasks){
     	if(incompleteTasks.isEmpty()){
-    		throw new NoPendingTasksException();
+    		throw new NoPendingTaskListException();
     	}
     }
     
@@ -69,8 +71,7 @@ public class TaskManager {
 		}
 		throw new NotFoundTaskException();	
 	}
-    
-    public String 
+
   
 
 
