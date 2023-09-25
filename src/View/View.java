@@ -16,10 +16,12 @@ public class View {
 	}
 	
 	public int readInt() {
+		
 		return scannerForInt.nextInt();
 	}
 	
 	public String readString() {
+		
 		return scannerForString.nextLine();
 	}
 	
